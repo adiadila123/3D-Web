@@ -1,0 +1,66 @@
+<svg
+        width="64"
+        height="64"
+        viewBox="0 0 64 64"
+        xmlns="http://www.w3.org/2000/svg"
+>
+    <!-- fundal transparent -->
+    <defs>
+        <!-- gradient orbital (cyan -> mov -> portocaliu) -->
+        <radialGradient id="orbGradient" cx="30%" cy="15%" r="80%">
+            <stop offset="0%" stop-color="#f9fafb" />
+            <stop offset="35%" stop-color="#38bdf8" />
+            <stop offset="70%" stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#020617" />
+        </radialGradient>
+
+        <!-- halo exterior -->
+        <radialGradient id="haloGradient" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55" />
+            <stop offset="60%" stop-color="#0f172a" stop-opacity="0" />
+            <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+        </radialGradient>
+    </defs>
+
+    <!-- halo subtil în jurul orbului -->
+    <circle
+            cx="32"
+            cy="32"
+            r="30"
+            fill="url(#haloGradient)"
+    />
+
+    <!-- orb principal -->
+    <circle
+            cx="32"
+            cy="32"
+            r="22"
+            fill="url(#orbGradient)"
+    />
+
+    <!-- inel interior (ca ring-ul din card-orb) -->
+    <circle
+            cx="32"
+            cy="32"
+            r="15"
+            fill="none"
+            stroke="#9ca3af"
+            stroke-width="2.2"
+            stroke-opacity="0.8"
+    />
+
+    <!-- mic highlight central -->
+    <circle
+            cx="26"
+            cy="24"
+            r="6"
+            fill="#f9fafb"
+            fill-opacity="0.35"
+    />
+
+    <!-- noduri luminoase pe orbită (ca .orb-node) -->
+    <circle cx="22" cy="18" r="3" fill="#38bdf8" />
+    <circle cx="44" cy="22" r="3" fill="#a855f7" />
+    <circle cx="24" cy="44" r="3" fill="#f97316" />
+    <circle cx="44" cy="40" r="3" fill="#e5e7eb" />
+</svg>
