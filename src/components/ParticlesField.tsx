@@ -8,7 +8,9 @@ interface ParticlesFieldProps {
 
 const ParticlesField: React.FC<ParticlesFieldProps> = ({ variant = "network" }) => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [enabled, setEnabled] = useState<boolean>(() => {
+
+    // nu avem nevoie de setEnabled, doar citim valoarea
+    const [enabled] = useState<boolean>(() => {
         if (typeof window === "undefined") return true;
         const prefersReducedMotion = window.matchMedia(
             "(prefers-reduced-motion: reduce)"
@@ -20,13 +22,22 @@ const ParticlesField: React.FC<ParticlesFieldProps> = ({ variant = "network" }) 
         const canvas = canvasRef.current;
         if (!canvas || !enabled) return;
 
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+        const context = canvas.getContext("2d");
+        if (!context) return;
+        const ctx = context; // CanvasRenderingContext2D, nu mai e posibil null
 
         let dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
         let width = 0;
         let height = 0;
-        let particles: { x: number; y: number; vx: number; vy: number; r: number }[] = [];
+
+        let particles: {
+            x: number;
+            y: number;
+            vx: number;
+            vy: number;
+            r: number;
+        }[] = [];
+
         const mouse = { x: -9999, y: -9999 };
 
         const rand = (min: number, max: number) => Math.random() * (max - min) + min;
@@ -53,18 +64,20 @@ const ParticlesField: React.FC<ParticlesFieldProps> = ({ variant = "network" }) 
         }
 
         function resize() {
-            if (!canvas) return;
+            const c = canvasRef.current;
+            if (!c) return;
+
             width =
-                canvas.clientWidth ||
-                canvas.parentElement?.clientWidth ||
+                c.clientWidth ||
+                c.parentElement?.clientWidth ||
                 window.innerWidth;
             height =
-                canvas.clientHeight ||
-                canvas.parentElement?.clientHeight ||
+                c.clientHeight ||
+                c.parentElement?.clientHeight ||
                 window.innerHeight;
 
-            canvas.width = Math.floor(width * dpr);
-            canvas.height = Math.floor(height * dpr);
+            c.width = Math.floor(width * dpr);
+            c.height = Math.floor(height * dpr);
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             seed();
         }
@@ -90,28 +103,33 @@ const ParticlesField: React.FC<ParticlesFieldProps> = ({ variant = "network" }) 
                 p.x += p.vx;
                 p.y += p.vy;
 
+                // wrap edges
                 if (p.x < -10) p.x = width + 10;
                 if (p.x > width + 10) p.x = -10;
                 if (p.y < -10) p.y = height + 10;
                 if (p.y > height + 10) p.y = -10;
 
+                // friction
                 p.vx *= 0.997;
                 p.vy *= 0.997;
             }
 
             ctx.clearRect(0, 0, width, height);
+
             const dotColour = readVar("--muted", "#88a");
             const lineColour = readVar("--brand", "#59f");
-            ctx.fillStyle = dotColour;
 
-            // 1) DOTS – mereu desenăm
+            // DOTS – mereu desenăm
+            ctx.fillStyle = dotColour;
+            ctx.globalAlpha = 0.9;
             for (const p of particles) {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                 ctx.fill();
             }
+            ctx.globalAlpha = 1;
 
-            // 2) CONNECTING LINES – DOAR PENTRU VARIANTA "network"
+            // LINES – DOAR pentru varianta "network"
             if (variant === "network") {
                 ctx.strokeStyle = lineColour;
                 for (let i = 0; i < particles.length; i++) {
